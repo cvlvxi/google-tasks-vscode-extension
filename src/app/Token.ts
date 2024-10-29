@@ -18,12 +18,18 @@ export function storeToken(token: Credentials) {
   }
 }
 
-export function getStoredToken(): Credentials {
+export function getStoredToken(): Credentials | undefined {
   try {
     return JSON.parse(fs.readFileSync(getTokenPath()).toString())
   } catch (err) {
-    if (err.code === 'ENOENT') throw new Error('Token not found')
-    throw new Error('Error getting stored Google token')
+    if (typeof err === 'object') {
+      if (err && 'code' in err && err.code == 'ENOENT') {
+        throw new Error('Credentials not found')
+      } else {
+        console.error(err)
+        throw new Error('Error in retrieving credentials')
+      }
+    }
   }
 }
 

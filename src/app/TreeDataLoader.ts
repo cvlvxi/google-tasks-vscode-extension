@@ -11,19 +11,23 @@ export default function loadTreeData() {
   try {
     const oAuth2Client = getOAuthClient()
     const token = getStoredToken()
-    oAuth2Client.setCredentials(token)
-    attachTreeProvider(oAuth2Client)
-    vscode.commands.executeCommand('setContext', 'GoogleUserTokenExists', true)
+    if (token) {
+      oAuth2Client.setCredentials(token)
+      attachTreeProvider(oAuth2Client)
+      vscode.commands.executeCommand('setContext', 'GoogleUserTokenExists', true)
+    }
   } catch (err) {
-    if (err.message === 'Token not found') {
-      vscode.window.showInformationMessage('Please authorize with Google to continue')
-    } else if (err.message === 'Credentials not found') {
-      vscode.window.showErrorMessage('Error getting credentials. Please report to the developers.')
-    } else {
-      console.error(err)
-      vscode.window.showErrorMessage(
-        err.message || 'Unknown Error. Please create an issue in Github.'
-      )
+    if (typeof err === 'object') {
+      if (err && 'code' in err && err.code == 'ENOENT') {
+        throw new Error('Credentials not found')
+      } else if (err && 'message' in err && err.message === 'Token not found') {
+        vscode.window.showInformationMessage('Please authorize with Google to continue')
+      } else if (err && 'message' in err && err.message === 'Credentials not found') {
+        vscode.window.showErrorMessage('Error getting credentials. Please report to the developers.')
+      } else {
+        console.error(err)
+        throw new Error('Unknown Error')
+      }
     }
   }
 }

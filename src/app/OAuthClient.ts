@@ -18,13 +18,17 @@ export default function getOAuthClient(): OAuth2Client {
 
 function getCredentials() {
   try {
-    return JSON.parse(fs.readFileSync(path.join(RootPath.path, 'resources', 'credentials.json')).toString())
+    return JSON.parse(
+      fs.readFileSync(path.join(RootPath.path, 'resources', 'credentials.json')).toString()
+    )
   } catch (err) {
-    console.log(err)
-    if (err.code === 'ENOENT') throw new Error('Credentials not found')
-    else {
-      console.error(err)
-      throw new Error('Error in retrieving credentials')
+    if (typeof err === 'object') {
+      if (err && 'code' in err && err.code == 'ENOENT') {
+        throw new Error('Credentials not found')
+      } else {
+        console.error(err)
+        throw new Error('Error in retrieving credentials')
+      }
     }
   }
 }

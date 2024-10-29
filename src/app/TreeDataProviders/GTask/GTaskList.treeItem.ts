@@ -11,12 +11,13 @@ export class GTaskList extends vscode.TreeItem {
   }
 
   // Overrides
-  get tooltip(): string {
-    return this.taskList.title || 'No Title'
-  }
+  // You can't override a parent accessor if it has default assigned a value
+  // override get tooltip(): string {
+  //   return this.taskList.title || 'No Title'
+  // }
 
   // Overrides
-  get description(): string {
-    return (this.childTaskList || []).length.toString()
-  }
+  // get description(): string {
+  //   return (this.childTaskList || []).length.toString()
+  // }
 }
