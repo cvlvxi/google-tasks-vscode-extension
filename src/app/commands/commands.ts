@@ -63,7 +63,9 @@ const commandsList = {
     gTaskTreeProvider.addTask({tasklist: node.taskList.id, requestBody: {title, notes}})
   },
   'googleTasks.addSubTask': async (node: GTask) => {
+    console.log('CHRIS: You are here', node);
     if (node.task.id === null) return
+
 
     const title = await window.showInputBox({
       prompt: 'Provide a title for the subtask',
@@ -120,7 +122,7 @@ export function registerCommands(): void {
 
 function sendTelemetry(command: string, handler: Function) {
   return function () {
-    telemetry.sendTelemetryEvent(command.replace('googleTasks.', ''))
+    // telemetry.sendTelemetryEvent(command.replace('googleTasks.', ''))
     return handler(...arguments)
   }
 }
